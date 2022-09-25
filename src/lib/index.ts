@@ -1,3 +1,3 @@
-export * from './dexie';
-export * from './window-storage';
-export * from './history';
+export * from './dexie.js';
+export * from './window-storage.js';
+export * from './history.js';

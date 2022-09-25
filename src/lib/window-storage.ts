@@ -2,6 +2,7 @@ import type { Writable } from 'svelte/store';
 import { writable } from 'svelte/store';
 import { listen } from 'svelte/internal';
 import { __BROWSER__ } from 'svelte-petit-utils';
+import { devalue } from 'devalue';
 
 type Cache = { [key: string]: [Writable<any>, Convert<any>] };
 type Convert<T> = {
@@ -9,34 +10,28 @@ type Convert<T> = {
 	stringify(val: T): string;
 };
 
-const NUMBER = {
-	parse: (s: string) => parseInt(s),
-	stringify: (n: number) => n.toString()
-};
-
-const STRING = {
-	parse: (s: string) => s,
-	stringify: (s: string) => s
-};
-
 function initConverter<T>(init: T): Convert<T> {
-	if ('number' === typeof init) return NUMBER as any;
-	if ('string' === typeof init) return STRING as any;
-
-	return JSON;
+	return {
+		parse(str) {
+			return eval(`(${str})`);
+		},
+		stringify(val) {
+			return devalue(val);
+		}
+	};
 }
 
 if (__BROWSER__) {
-	listen(window, 'storage', ({ storageArea, key, newValue, oldValue, url }: StorageEvent) => {
-		let cache: Cache = undefined;
+	listen(window, 'storage', (({ storageArea, key, newValue, oldValue, url }: StorageEvent) => {
+		let cache: Cache = undefined as any as Cache;
 		if (window.localStorage === storageArea) cache = local_cache;
 		if (window.sessionStorage === storageArea) cache = session_cache;
 
-		if (!cache[key]) return;
+		if (!cache[key!]) return;
 
-		const [store, convert] = cache[key];
-		store.set(convert.parse(newValue));
-	});
+		const [store, convert] = cache[key!];
+		store.set(convert.parse(newValue!));
+	}) as any);
 }
 
 const local_cache: Cache = {};
@@ -50,7 +45,7 @@ function writeCache<T>(
 ) {
 	if (cache[key]) throw new Error(`${key} duplicated.`);
 
-	initValue = convert.parse(storage.getItem(key)) || initValue;
+	initValue = convert.parse(storage.getItem(key)!) || initValue;
 
 	const store = writable(initValue);
 	store.subscribe((newValue) => {

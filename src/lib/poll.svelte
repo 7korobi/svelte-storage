@@ -5,10 +5,13 @@
 	import { to_tempo, Tempo } from 'svelte-tick-timer';
 	import { INTERVAL_MAX } from 'svelte-tick-timer';
 	import browser from 'svelte-browser';
+	import browserInit from 'svelte-browser/browser';
 	import { __BROWSER__ } from 'svelte-petit-utils';
 	import { webPoll } from './dexie';
 
 	const { isActive } = browser;
+
+	browserInit();
 
 	export let version = '1.0.0';
 	export let timer = '1d';
@@ -23,7 +26,7 @@
 	// for requesting.
 	export let api_call = async () => {
 		const req = await fetch(idx);
-		return { version, idx, pack: await req.json() } as WebPollData<any>;
+		return { version, idx, pack: eval(`(${await req.text()})`) } as WebPollData<any>;
 	};
 
 	let timerId = 0 as any;
@@ -38,7 +41,6 @@
 		} else {
 			clearTimeout(timerId);
 		}
-		console.log({is_active, o})
 	}
 
 	onDestroy(() => {
@@ -58,7 +60,6 @@
 				logger(tempo);
 			} else {
 				// IndexedDB metadata not use if memory has past data,
-				console.log(idx);
 				const data = await webPoll.data.get(idx);
 				if (data && data.version === version) {
 					get_by_cache(tempo, data);

@@ -1,24 +1,26 @@
 <script lang="ts">
-	import { Browser } from 'svelte-browser';
 	import { writeLocal, writeSession, writeHistory } from '$lib';
 	import Poll from '$lib/poll.svelte';
+
+	const local = writeLocal('poll', {});
+	const session = writeSession('poll', {});
+	const history = writeHistory<any>([], (o) => o.id);
 
 	function poll(id: number) {
 		return {
 			version: '1.0.0',
-			timer: '5s',
-			shift: '1s',
-			idx: `/localhost/${id}/poll`,
+			timer: '1m',
+			shift: '20s',
+			idx: `/${id}/poll`,
 			onFetch(o: any) {
-				console.log(o);
+				$local = $session = o;
+				history.add(o);
 			}
 		};
 	}
 
 	let id = 1;
 </script>
-
-<Browser ratio="{1.0}" isDefaultSafeArea="{false}" />
 
 <h1>Welcome to your library project</h1>
 <p>Create your package using @sveltejs/package and preview/showcase your work with SvelteKit</p>
