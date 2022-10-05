@@ -2,7 +2,7 @@
 	import { devalue } from 'devalue';
 	import { writeLocal, writeSession, writeHistory } from '$lib';
 	import Poll from '$lib/poll.svelte';
-	import Stream from '$lib/stream/client.svelte';
+	import Stream from '$lib/stream.svelte';
 
 	const local = writeLocal('poll', {});
 	const session = writeSession('poll', {});
@@ -12,8 +12,8 @@
 		$local = $session = o;
 		history.add(o);
 	}
-	let next_at: number
-	let pack: any
+	let next_at: number;
+	let pack: any;
 	let id = 1;
 	let sse = [] as { now: Date }[];
 </script>
@@ -24,8 +24,12 @@
 
 <Poll version="1.0.0" timer="1m" shift="20s" idx="/{id}/poll" bind:next_at bind:pack {onFetch} />
 <Stream idx="/{id}/tick" bind:store={sse} />
-<p class="text">{devalue(sse)}</p>
-<p class="text">next at {next_at}</p>
+<hr />
+<h3 class="text">Poll next at {next_at}</h3>
 <p class="text">{devalue(pack)}</p>
+<hr />
+<h3 class="text">Stream</h3>
+<p class="text">{devalue(sse)}</p>
+<hr />
 
 <button on:click={() => id++}>{id}</button>

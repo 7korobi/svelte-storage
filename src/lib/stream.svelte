@@ -2,7 +2,7 @@
 	import { onDestroy } from 'svelte';
 	import { __BROWSER__ } from 'svelte-petit-utils';
 
-	import { utf8decoder } from './module';
+	import { utf8decoder } from './const';
 
 	export let store = [] as any[];
 	export let idx = '';
