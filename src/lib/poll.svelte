@@ -1,12 +1,12 @@
 <script lang="ts">
-	import type { WebPollData } from './dexie';
-
+	import { __BROWSER__ } from 'svelte-petit-utils';
 	import { onDestroy } from 'svelte';
 	import { to_tempo, Tempo } from 'svelte-tick-timer';
 	import { INTERVAL_MAX } from 'svelte-tick-timer';
 	import browser from 'svelte-browser';
 	import browserInit from 'svelte-browser/browser';
-	import { __BROWSER__ } from 'svelte-petit-utils';
+
+	import type { WebPollData } from './dexie';
 	import { webPoll } from './dexie';
 
 	const { isActive } = browser;
@@ -32,10 +32,10 @@
 	let timerId = 0 as any;
 
 	$: tempo = to_tempo(timer, shift);
-	$: restart($isActive, { version, idx, timer });
+	$: __BROWSER__ && restart($isActive, { version, idx, tempo });
 	$: if (pack) onFetch(pack);
 
-	function restart(is_active: boolean, o: { idx: string; version: string; timer: string }) {
+	function restart(is_active: boolean, o: { idx: string; version: string; tempo: Tempo }) {
 		if (is_active && o.idx) {
 			tick();
 		} else {

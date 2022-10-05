@@ -1,6 +1,6 @@
 {
 	"name": "svelte-storage",
-	"version": "0.1.7",
+	"version": "0.1.8",
 	"homepage": "https://github.com/7korobi/svelte-storage/blob/main/src/lib/",
 	"license": "MIT",
 	"keywords": [
