@@ -1,6 +1,6 @@
-import { devalue } from 'devalue';
+import { uneval } from 'devalue';
 
 /** @type {import('./$types').RequestHandler} */
 export function GET({ params }) {
-	return new Response(devalue({ inf: Infinity, now: new Date(), ...params }));
+	return new Response(uneval({ inf: Infinity, now: new Date(), ...params }));
 }

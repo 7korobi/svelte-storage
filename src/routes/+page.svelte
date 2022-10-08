@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { devalue } from 'devalue';
+	import { uneval } from 'devalue';
 	import { writeLocal, writeSession, writeHistory } from '$lib';
 	import Poll from '$lib/poll.svelte';
 	import Stream from '$lib/stream.svelte';
@@ -26,10 +26,10 @@
 <Stream idx="/{id}/tick" bind:store={sse} />
 <hr />
 <h3 class="text">Poll next at {next_at}</h3>
-<p class="text">{devalue(pack)}</p>
+<p class="text">{uneval(pack)}</p>
 <hr />
 <h3 class="text">Stream</h3>
-<p class="text">{devalue(sse)}</p>
+<p class="text">{uneval(sse)}</p>
 <hr />
 
 <button on:click={() => id++}>{id}</button>

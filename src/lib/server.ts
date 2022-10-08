@@ -1,5 +1,5 @@
 import type Redis from 'ioredis';
-import { devalue } from 'devalue';
+import { uneval } from 'devalue';
 
 type Control = ReadableStreamController<any>;
 type Streams = Map<Control, Control>;
@@ -35,7 +35,7 @@ function stream<T>(
 
 		console.log(`wakeup ${path}`);
 		for (const value of await load(path)) {
-			history.add(devalue(value));
+			history.add(uneval(value));
 		}
 	}
 
@@ -59,7 +59,7 @@ function stream<T>(
 	}
 
 	function publish(value: T, PUB_REDIS: Redis | undefined = undefined) {
-		const text = devalue(value);
+		const text = uneval(value);
 		if (streams.size) {
 			if (PUB_REDIS) {
 				PUB_REDIS.publish(path, text);

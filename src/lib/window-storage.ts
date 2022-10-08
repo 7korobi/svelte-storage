@@ -2,7 +2,7 @@ import type { Writable } from 'svelte/store';
 import { writable } from 'svelte/store';
 import { listen } from 'svelte/internal';
 import { __BROWSER__ } from 'svelte-petit-utils';
-import { devalue } from 'devalue';
+import { uneval } from 'devalue';
 
 type Cache = { [key: string]: [Writable<any>, Convert<any>] };
 type Convert<T> = {
@@ -16,7 +16,7 @@ function initConverter<T>(init: T): Convert<T> {
 			return eval(`(${str})`);
 		},
 		stringify(val) {
-			return devalue(val);
+			return uneval(val);
 		}
 	};
 }
