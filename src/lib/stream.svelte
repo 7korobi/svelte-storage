@@ -2,8 +2,6 @@
 	import { onDestroy } from 'svelte';
 	import { __BROWSER__ } from 'svelte-petit-utils';
 
-	import { utf8decoder } from './const';
-
 	export let store = [] as any[];
 	export let idx = '';
 
@@ -27,6 +25,7 @@
 		if (done) {
 			cleanup();
 		} else {
+			const utf8decoder = new TextDecoder();
 			const texts = utf8decoder.decode(value).slice(0, -1).split(';');
 			for (const text of texts) {
 				store.push(eval(`(${text})`));

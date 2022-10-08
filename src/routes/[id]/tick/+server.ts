@@ -1,6 +1,7 @@
 import stream from '$lib/server';
 import Redis from 'ioredis';
 import { error } from '@sveltejs/kit';
+import { interval } from 'svelte-petit-utils';
 
 const REDIS = undefined; //new Redis('redis://localhost:6379');
 
@@ -15,7 +16,7 @@ const demo_tick = (id: string) =>
 		REDIS
 	);
 
-const tid = setInterval(() => {
+const bye = interval(() => {
 	const data = { now: new Date() };
 	demo_tick('1').publish(data);
 	demo_tick('3').publish(data);

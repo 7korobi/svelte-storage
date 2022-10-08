@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { __BROWSER__ } from 'svelte-petit-utils';
+	import { __BROWSER__, timeout } from 'svelte-petit-utils';
 	import { onDestroy } from 'svelte';
 	import { to_tempo, Tempo } from 'svelte-tick-timer';
 	import { INTERVAL_MAX } from 'svelte-tick-timer';
@@ -29,7 +29,7 @@
 		return { version, idx, pack: eval(`(${await req.text()})`) } as WebPollData<any>;
 	};
 
-	let timerId = 0 as any;
+	let bye_timeout: () => void | undefined;
 
 	$: tempo = to_tempo(timer, shift);
 	$: __BROWSER__ && restart($isActive, { version, idx, tempo });
@@ -39,12 +39,12 @@
 		if (is_active && o.idx) {
 			tick();
 		} else {
-			clearTimeout(timerId);
+			bye_timeout && bye_timeout();
 		}
 	}
 
 	onDestroy(() => {
-		clearTimeout(timerId);
+		bye_timeout && bye_timeout();
 	});
 
 	function logger(tempo: Tempo, mode: string = '') {
@@ -76,7 +76,7 @@
 		}
 		if (tempo.timeout < INTERVAL_MAX) {
 			// 25days
-			timerId = setTimeout(tick, tempo.timeout);
+			bye_timeout = timeout(tick, tempo.timeout);
 		}
 	}
 
