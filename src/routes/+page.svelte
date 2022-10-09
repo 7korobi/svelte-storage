@@ -1,5 +1,7 @@
 <script lang="ts">
 	import { uneval } from 'devalue';
+	import { enhance } from '$app/forms';
+
 	import { writeLocal, writeSession, writeHistory } from '$lib';
 	import Poll from '$lib/poll.svelte';
 	import Stream from '$lib/stream.svelte';
@@ -15,7 +17,7 @@
 	let next_at: number;
 	let pack: any;
 	let id = 1;
-	let sse = [] as { now: Date }[];
+	let chats = [] as { now: Date; message: string }[];
 </script>
 
 <h1>Welcome to your library project</h1>
@@ -23,13 +25,26 @@
 <p>Visit <a href="https://kit.svelte.dev">kit.svelte.dev</a> to read the documentation</p>
 
 <Poll version="1.0.0" timer="1m" shift="20s" idx="/{id}/poll" bind:next_at bind:pack {onFetch} />
-<Stream idx="/{id}/tick" bind:store={sse} />
+<Stream idx="/{id}/chat" bind:store={chats} />
 <hr />
 <h3 class="text">Poll next at {next_at}</h3>
 <p class="text">{uneval(pack)}</p>
 <hr />
 <h3 class="text">Stream</h3>
-<p class="text">{uneval(sse)}</p>
+{#each chats as chat}
+	<p>
+		{chat.now}
+		<span>
+			{chat.message}
+		</span>
+	</p>
+{/each}
+<hr />
+<form method="POST" use:enhance action="?/message">
+	<input name="message" type="text" />
+	<input name="id" type="hidden" value={id} />
+	<button>chat</button>
+</form>
 <hr />
 
 <button on:click={() => id++}>{id}</button>

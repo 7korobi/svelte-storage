@@ -13,9 +13,9 @@ specifiers:
   prettier: ^2.7.1
   prettier-plugin-svelte: ^2.7.1
   svelte: ^3.50.1
-  svelte-browser: ^0.3.19
+  svelte-browser: ^0.3.21
   svelte-check: ^2.9.1
-  svelte-petit-utils: ^0.2.0
+  svelte-petit-utils: ^0.2.1
   svelte-preprocess: ^4.10.7
   svelte-tick-timer: ^0.1.4
   tslib: ^2.4.0
@@ -26,8 +26,8 @@ dependencies:
   date-fns: 2.29.3
   dexie: 3.2.2
   ioredis: 5.2.3
-  svelte-browser: 0.3.19
-  svelte-petit-utils: 0.2.0
+  svelte-browser: 0.3.21
+  svelte-petit-utils: 0.2.1
   svelte-tick-timer: 0.1.4
   tslib: 2.4.0
 
@@ -1821,12 +1821,12 @@ packages:
     engines: {node: '>= 0.4'}
     dev: true
 
-  /svelte-browser/0.3.19:
-    resolution: {integrity: sha512-blzNrr18Kb9jl65kuKvm1GJjwNNS9Xzzup2DgUeCf9r5hLlWW3qyjsuvbbT9zQTf9I2zvBih/PqGDrnPMgDS1g==}
+  /svelte-browser/0.3.21:
+    resolution: {integrity: sha512-OLGBeTUjLiZc0dydoXqLKn9DZreGEDk2sYywUves6VkU0n3JZtLZfAwE9oigmpDbX/SUvDiyLduLR5O8sV0XSw==}
     dependencies:
-      svelte-petit-utils: 0.2.0
+      svelte-petit-utils: 0.2.1
       tslib: 2.4.0
-      ua-parser-js: 0.7.31
+      ua-parser-js: 1.0.2
     dev: false
 
   /svelte-check/2.9.1_svelte@3.50.1:
@@ -1872,8 +1872,8 @@ packages:
       tslib: 2.4.0
     dev: false
 
-  /svelte-petit-utils/0.2.0:
-    resolution: {integrity: sha512-g47+pNtcGpD3PX8galpoZkJsbUVHNWsF7EJsRQTxov1BhFeZQASgGbxNbbcBy8WEOCtHkvH9PYNOzGHMocKM2A==}
+  /svelte-petit-utils/0.2.1:
+    resolution: {integrity: sha512-5tcpc4JhT5IDuJ2FvQHPn84k8yPLVa6z2LyOt+q8XZAbro1zfiRh6CU8v+tbsOvS/QceFsuh6iFvjZpSYQ9KPw==}
     dependencies:
       tslib: 2.4.0
     dev: false
@@ -1934,7 +1934,7 @@ packages:
     dependencies:
       date-fns: 2.29.3
       svelte: 3.50.1
-      svelte-browser: 0.3.19
+      svelte-browser: 0.3.21
       svelte-petit-utils: 0.1.8
       tslib: 2.4.0
     dev: false
@@ -1999,8 +1999,8 @@ packages:
     hasBin: true
     dev: true
 
-  /ua-parser-js/0.7.31:
-    resolution: {integrity: sha512-qLK/Xe9E2uzmYI3qLeOmI0tEOt+TBBQyUIAh4aAgU05FVYzeZrKUdkAZfBNVGRaHVgV0TDkdEngJSw/SyQchkQ==}
+  /ua-parser-js/1.0.2:
+    resolution: {integrity: sha512-00y/AXhx0/SsnI51fTc0rLRmafiGOM4/O+ny10Ps7f+j/b8p/ZY11ytMgznXkOVo4GQ+KwQG5UQLkLGirsACRg==}
     dev: false
 
   /unbox-primitive/1.0.2:

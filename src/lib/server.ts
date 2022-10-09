@@ -8,9 +8,14 @@ type StreamArgs<T> = {
 	load(path: string): Promise<T[]>;
 };
 
+type OptionArgs = {
+	pub?: Redis;
+	sub?: Redis;
+};
+
 const data = new Map<string, readonly [Streams, History]>();
 
-function init(path: string, REDIS: Redis | undefined = undefined): readonly [Streams, History] {
+function init(path: string, sug: Redis | undefined = undefined): readonly [Streams, History] {
 	if (data.has(path)) return data.get(path)!;
 
 	const item = [new Map<Control, Control>(), new Set<string>()] as const;
@@ -18,19 +23,15 @@ function init(path: string, REDIS: Redis | undefined = undefined): readonly [Str
 	return item;
 }
 
-function stream<T>(
-	path: string,
-	{ load }: StreamArgs<T>,
-	SUB_REDIS: Redis | undefined = undefined
-) {
-	const [streams, history] = init(path, SUB_REDIS);
+function stream<T>(path: string, { load }: StreamArgs<T>, option: OptionArgs = {}) {
+	const [streams, history] = init(path, option.sub);
 
 	return { publish, response };
 
 	async function wake() {
-		if (SUB_REDIS) {
-			SUB_REDIS.subscribe(path);
-			SUB_REDIS.on('message', message);
+		if (option.sub) {
+			option.sub.subscribe(path);
+			option.sub.on('message', message);
 		}
 
 		console.log(`wakeup ${path}`);
@@ -42,9 +43,9 @@ function stream<T>(
 	function shut() {
 		history.clear();
 
-		if (SUB_REDIS) {
-			SUB_REDIS.off('message', message);
-			SUB_REDIS.unsubscribe(path);
+		if (option.sub) {
+			option.sub.off('message', message);
+			option.sub.unsubscribe(path);
 		}
 	}
 
@@ -58,11 +59,11 @@ function stream<T>(
 		console.log(`message ${path} ${streams.size}`);
 	}
 
-	function publish(value: T, PUB_REDIS: Redis | undefined = undefined) {
+	function publish(value: T) {
 		const text = uneval(value);
 		if (streams.size) {
-			if (PUB_REDIS) {
-				PUB_REDIS.publish(path, text);
+			if (option.pub) {
+				option.pub.publish(path, text);
 			} else {
 				message(path, text);
 			}
