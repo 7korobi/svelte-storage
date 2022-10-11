@@ -3,10 +3,10 @@ import { __BROWSER__ } from 'svelte-petit-utils';
 
 export type WebPollData<T> = {
 	version: string;
-	idx: string;
+	src: string;
 	next_at?: number;
 	next_time?: string;
-	pack: T;
+	data: T;
 };
 class WebPoll extends Dexie {
 	data!: Dexie.Table<WebPollData<any>, string>;
@@ -15,8 +15,8 @@ class WebPoll extends Dexie {
 export let webPoll: WebPoll = null as any;
 
 if (__BROWSER__) {
-	webPoll = new Dexie('poll-web') as WebPoll;
+	webPoll = new Dexie('poll-api') as WebPoll;
 	webPoll.version(1).stores({
-		data: '&idx'
+		data: '&src'
 	});
 }

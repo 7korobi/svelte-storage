@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { __BROWSER__, timeout } from 'svelte-petit-utils';
+	import { __BROWSER__, timeoutOn } from 'svelte-petit-utils';
 	import { onDestroy } from 'svelte';
 	import { to_tempo, Tempo } from 'svelte-tick-timer';
 	import { INTERVAL_MAX } from 'svelte-tick-timer';
@@ -16,40 +16,47 @@
 	export let version = '1.0.0';
 	export let timer = '1d';
 	export let shift = '0s';
-	export let idx = '';
+	export let src = '';
+	export let disable = false;
 
 	// for export.
-	export let onFetch = (pack: any) => {};
-	export let pack: any = undefined;
+	export let data: any = undefined;
 	export let next_at = -Infinity;
 
 	// for requesting.
 	export let api_call = async () => {
-		const req = await fetch(idx);
-		return { version, idx, pack: eval(`(${await req.text()})`) } as WebPollData<any>;
+		const req = await fetch(src, { signal });
+		return { version, src, data: eval(`(${await req.text()})`) } as WebPollData<any>;
 	};
 
-	let bye_timeout: () => void | undefined;
+	let byeTimeout: () => void | undefined;
+	let controller: AbortController;
+	let signal: AbortSignal;
 
 	$: tempo = to_tempo(timer, shift);
-	$: __BROWSER__ && restart($isActive, { version, idx, tempo });
-	$: if (pack) onFetch(pack);
+	$: is_active = $isActive && !disable;
+	$: if (__BROWSER__ && version && src) refresh();
+	$: if (__BROWSER__ && version && src && is_active) tick();
 
-	function restart(is_active: boolean, o: { idx: string; version: string; tempo: Tempo }) {
-		if (is_active && o.idx) {
-			tick();
-		} else {
-			bye_timeout && bye_timeout();
+	onDestroy(close);
+
+	function refresh() {
+		next_at = -Infinity;
+		close();
+		controller = new AbortController();
+		signal = controller.signal;
+	}
+
+	function close() {
+		byeTimeout && byeTimeout();
+		if (controller) {
+			// controller.abort();
 		}
 	}
 
-	onDestroy(() => {
-		bye_timeout && bye_timeout();
-	});
-
 	function logger(tempo: Tempo, mode: string = '') {
 		const wait = new Date().getTime() - tempo.write_at;
-		console.log({ wait, idx, mode });
+		console.log({ wait, src, mode });
 	}
 
 	async function tick() {
@@ -60,7 +67,7 @@
 				logger(tempo);
 			} else {
 				// IndexedDB metadata not use if memory has past data,
-				const data = await webPoll.data.get(idx);
+				const data = await webPoll.data.get(src);
 				if (data && data.version === version) {
 					get_by_cache(tempo, data);
 					if (data.next_at! <= tempo.write_at) {
@@ -72,16 +79,16 @@
 			}
 			next_at = tempo.next_at;
 		} catch (e) {
-			console.error({ idx, version }, e);
+			console.error({ src, version }, e);
 		}
 		if (tempo.timeout < INTERVAL_MAX) {
 			// 25days
-			bye_timeout = timeout(tick, tempo.timeout);
+			byeTimeout = timeoutOn(tick, tempo.timeout);
 		}
 	}
 
 	function get_by_cache(tempo: Tempo, cache: WebPollData<any>) {
-		pack = cache.pack;
+		data = cache.data;
 		logger(tempo, '(cache)');
 	}
 
@@ -89,7 +96,7 @@
 		api.next_at = tempo.next_at;
 		api.next_time = new Date(tempo.next_at).toLocaleString();
 		await webPoll.data.put(api);
-		pack = api.pack;
+		data = api.data;
 
 		logger(tempo, '(api)');
 	}
