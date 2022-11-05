@@ -1,4 +1,4 @@
-import { demo_tick } from './_const.server';
+import { demo_tick } from './_const.server.js';
 
 /** @type {import('./$types').Actions} */
 export const actions = {
@@ -8,11 +8,19 @@ export const actions = {
 		locals,
 		request,
 		url,
-		routeId,
+		route,
 		setHeaders,
 		getClientAddress,
 		fetch
 	}) => {
+		console.log({
+			params,
+			cookies: cookies.get('uuid', { decode: decodeURIComponent }),
+			clientAddress: getClientAddress(),
+			locals,
+			url,
+			route
+		});
 		const data: FormData = await request.formData();
 		const message = data.get('message') as string;
 		const id = data.get('id') as string;
